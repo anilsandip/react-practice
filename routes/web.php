@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+Route::group(['middleware' => ['verify.shopify']], function () {
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('home');
+
+    Route::get('{url?}', function () {
+        return view('welcome');
+    })->where('url', '.*');
 });
