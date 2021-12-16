@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Form, FormLayout, Checkbox, TextField, Button } from "@shopify/polaris"
+
 function Test() {
-    console.log('hello')
     const [newsletter, setNewsletter] = useState(false);
     const [email, setEmail] = useState('');
     const handleSubmit = useCallback((_event) => {

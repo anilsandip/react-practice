@@ -1,11 +1,18 @@
 import React from "react";
-import {AppProvider} from "@shopify/polaris";
-// import {Provider} from "@shopify/app-bridge-react";
-import { BrowserRouter as Router } from "react-router-dom";
+import {AppProvider,  Frame, Page} from "@shopify/polaris";
+import {Provider} from "@shopify/app-bridge-react";
+import {BrowserRouter as Router, Link} from "react-router-dom";
 import Menu from "../routes/Menu";
 import Content from "./Content";
 
 function App() {
+    const config = {
+        apiKey : document.getElementById("apiKey").value,
+        shopOrigin : document.getElementById("shopOrigin").value,
+        host: document.getElementById("shopify_host").value,
+        planId : document.getElementById("planId").value,
+        forceRedirect : true,
+    };
     return (
         <AppProvider
             i18n={{
@@ -20,12 +27,18 @@ function App() {
                 },
             }}
         >
-            <Router>
-                <div className="App">
-                    <Menu />
-                    <Content />
-                </div>
-            </Router>
+            <Provider config={config}>
+                <Frame>
+                    <Router>
+                        <div className="App">
+                            <Page fullWidth={true}>
+                                <Menu />
+                                <Content />
+                            </Page>
+                        </div>
+                    </Router>
+                </Frame>
+            </Provider>
         </AppProvider>
     );
 }
