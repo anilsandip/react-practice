@@ -13,6 +13,7 @@ function App() {
         planId : document.getElementById("planId").value,
         forceRedirect : true,
     };
+
     return (
         <AppProvider
             i18n={{

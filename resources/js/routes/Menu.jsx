@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 import { Link, useLocation } from "react-router-dom";
-import createApp from "@shopify/app-bridge";
 import { History } from "@shopify/app-bridge/actions";
 import {routes as AppRoutes} from "../routes/route";
 import {Stack} from "@shopify/polaris";
@@ -11,20 +10,11 @@ const Menu = (props) => {
     const currentRoute = AppRoutes.find((route) => {
         return location.pathname === route.path
     });
-    //
-    // const shopifyApp = createApp({
-    //     apiKey: process.env.MIX_SHOPIFY_API_KEY,
-    //     shopOrigin: document.getElementById("shopOrigin").value,
-    //     host: document.getElementById("shopify_host").value,
-    //     forceRedirect: true,
-    // })
-    //
-    // useEffect(() => {
-    //     console.log(shopifyApp)
-    //     let history = History.create(shopifyApp);
-    //     history.dispatch(History.Action.PUSH, location.pathname)
-    //     console.log(location.pathname)
-    // }, [location.pathname]);
+
+    useEffect(() => {
+        let history = History.create(window.shopify_app_bridge);
+        history.dispatch(History.Action.PUSH, location.pathname)
+    }, [location.pathname]);
 
     return(
         <div className="Polaris-Layout">
