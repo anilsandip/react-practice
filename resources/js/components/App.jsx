@@ -1,5 +1,5 @@
 import React from "react";
-import {AppProvider,  Frame, Page} from "@shopify/polaris";
+import { AppProvider,  Frame, Page } from "@shopify/polaris";
 import {Provider} from "@shopify/app-bridge-react";
 import {BrowserRouter as Router, Link} from "react-router-dom";
 import Menu from "../routes/Menu";
