@@ -32,8 +32,8 @@ function App() {
                 <Frame>
                     <Router>
                         <div className="App">
+                            <Menu />
                             <Page fullWidth={true}>
-                                <Menu />
                                 <Content />
                             </Page>
                         </div>

@@ -1,8 +1,8 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { History } from "@shopify/app-bridge/actions";
 import {routes as AppRoutes} from "../routes/route";
-import {Stack} from "@shopify/polaris";
+import { Stack } from "@shopify/polaris";
 
 const Menu = (props) => {
 
@@ -11,14 +11,15 @@ const Menu = (props) => {
         return location.pathname === route.path
     });
 
+    let history = History.create(window.shopify_app_bridge);
+
     useEffect(() => {
-        let history = History.create(window.shopify_app_bridge);
         history.dispatch(History.Action.PUSH, location.pathname)
     }, [location.pathname]);
 
     return(
-        <div className="Polaris-Layout">
-            <div className={`Polaris-Card Remove_Car_Border_Radius All_Menu`}>
+        <div className="Menu">
+            <div className={`Polaris-Card Remove_Card_Border_Radius Tabs`}>
                 <div className="Polaris-Tabs__Wrapper">
                     <Stack>
                         <Stack.Item fill>
