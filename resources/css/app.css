@@ -244,6 +244,10 @@
     background: #f6f6f7;
 }
 
+.StyleDataTableActions {
+    float: right;
+}
+
 /***********Home-page-End***********/
 
 /***********Media-query***********/

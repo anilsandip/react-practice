@@ -1,5 +1,5 @@
 import React from "react";
-import { AppProvider,  Frame, Page } from "@shopify/polaris";
+import { AppProvider,  Frame } from "@shopify/polaris";
 import {Provider} from "@shopify/app-bridge-react";
 import {BrowserRouter as Router, Link} from "react-router-dom";
 import Menu from "../routes/Menu";
@@ -33,9 +33,7 @@ function App() {
                     <Router>
                         <div className="App">
                             <Menu />
-                            <Page fullWidth={true}>
-                                <Content />
-                            </Page>
+                            <Content />
                         </div>
                     </Router>
                 </Frame>
