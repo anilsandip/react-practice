@@ -1,4 +1,5 @@
 import Home from "../components/pages/Home";
+import Products from "../components/pages/Products";
 import Test from "../components/pages/Test";
 import Index from "../components/products/Index";
 import Create from "../components/products/Create";
@@ -6,8 +7,11 @@ import Show from "../components/products/Show";
 
 const INDEX = '/';
 const PRODUCTS = '/products';
-const CREATE_PRODUCT = '/products/create';
-const SHOW_PRODUCT = '/products/:id';
+const PRODUCTS_LAYOUT = {
+    LIST_PRODUCTS: '',
+    CREATE_PRODUCT: 'create',
+    SHOW_PRODUCT: ':id',
+};
 const TEST = '/test';
 
 const routes = [
@@ -23,25 +27,35 @@ const routes = [
         path: PRODUCTS,
         exact: true,
         page: {
-            component: Index,
+            component: Products,
             title: 'Products'
-        }
-    },
-    {
-        path: CREATE_PRODUCT,
-        exact: true,
-        page: {
-            component: Create,
-            title: 'Create Product'
-        }
-    },
-    {
-        path: SHOW_PRODUCT,
-        exact: true,
-        page: {
-            component: Show,
-            title: 'Product'
-        }
+        },
+        children: [
+            {
+                path: PRODUCTS_LAYOUT.LIST_PRODUCTS,
+                exact: true,
+                page: {
+                    component: Index,
+                    title: 'Products'
+                }
+            },
+            {
+                path:  PRODUCTS_LAYOUT.CREATE_PRODUCT,
+                exact: true,
+                page: {
+                    component: Create,
+                    title: 'Create Product'
+                }
+            },
+            {
+                path: PRODUCTS_LAYOUT.SHOW_PRODUCT,
+                exact: true,
+                page: {
+                    component: Show,
+                    title: 'Product'
+                }
+            },
+        ]
     },
     {
         path: TEST,
