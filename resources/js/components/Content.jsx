@@ -1,14 +1,14 @@
 import React, {useEffect} from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import {History} from "@shopify/app-bridge/actions";
-import {routes as AppRoutes} from "../routes/route";
+import {routes as AppRoutes, INDEX} from "../routes/route";
 
 function Content(){
     const location = useLocation();
     let history = History.create(window.shopify_app_bridge);
 
     useEffect(() => {
-        history.dispatch(History.Action.PUSH, location.pathname)
+        history.dispatch(History.Action.PUSH, location.pathname === INDEX ? '/products' : location.pathname)
     }, [location.pathname]);
 
     const prepareRoutes = (route, index) => {

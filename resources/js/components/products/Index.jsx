@@ -2,11 +2,14 @@ import React, {useEffect, useState} from "react";
 import {Card, DataTable, Page, ButtonGroup, Button, Pagination} from "@shopify/polaris";
 import { DeleteMinor, EditMinor } from "@shopify/polaris-icons";
 import { useNavigate, Link } from "react-router-dom"
+import ConfirmDialogue from "../common/ConfirmDialogue"
 
 function Index() {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [modal, setModal] = useState(false);
+    const [confirm, setConfirm] = useState(false);
+    const [productIndex, setProductIndex] = useState(null);
 
     const handleAdd = () => {
         navigate('/products/create');
@@ -18,12 +21,25 @@ function Index() {
 
     const handleDelete = (index) => {
         setModal(true);
-        alert(`Delete ${index}`);
+        setProductIndex(index);
+        console.log(`Delete ${index}`);
+    }
+
+    const handleConfirm = (confirmation) => {
+        setConfirm(confirmation);
+        setModal(false);
+        if(confirmation) {
+            console.log(`Confirmed ${productIndex}`);
+        }
+        else {
+            setProductIndex(null);
+            console.log(`Declined ${productIndex}`);
+        }
     }
 
     const primaryAction = {
         content: 'Add',
-        onAction: () => handleAdd()
+        onAction: handleAdd
     };
 
     const columnContentTypes = [
@@ -107,8 +123,8 @@ function Index() {
     }, [products]);
 
     return (
-        <div>
-            <Page fullWidth title="Books" primaryAction={primaryAction}>
+        <>
+            <Page fullWidth title="Products" primaryAction={primaryAction}>
                 <Card>
                     <DataTable
                         columnContentTypes={columnContentTypes}
@@ -117,8 +133,20 @@ function Index() {
                         footerContent={footerContent}
                     />
                 </Card>
+                {
+                    modal &&
+                    <ConfirmDialogue
+                        message={`Are you sure want to delete this product ?`}
+                        options={{
+                            primaryAction: {
+                                destructive: true,
+                            }
+                        }}
+                        setConfirm={handleConfirm}
+                    />
+                }
             </Page>
-        </div>
+        </>
     );
 }
 export default Index;
