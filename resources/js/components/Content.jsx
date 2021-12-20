@@ -8,7 +8,7 @@ function Content(){
     let history = History.create(window.shopify_app_bridge);
 
     useEffect(() => {
-        history.dispatch(History.Action.PUSH, location.pathname === INDEX ? '/products' : location.pathname)
+        history.dispatch(History.Action.PUSH, location.pathname === INDEX || location.pathname === '' ? '/products' : location.pathname)
     }, [location.pathname]);
 
     const prepareRoutes = (route, index) => {

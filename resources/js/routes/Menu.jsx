@@ -5,8 +5,8 @@ import { Stack } from "@shopify/polaris";
 const Menu = (props) => {
     const INDEX = '/';
     const PRODUCTS = '/products';
-    const CREATE_PRODUCT = '/products/create';
-    const SHOW_PRODUCT = '/products/:id';
+    // const CREATE_PRODUCT = '/products/create';
+    // const SHOW_PRODUCT = '/products/:id';
     const TEST = '/test';
 
     const menu = [
@@ -17,7 +17,7 @@ const Menu = (props) => {
             title: 'Home'
         },
         {
-            paths: [PRODUCTS, CREATE_PRODUCT, SHOW_PRODUCT],
+            paths: [PRODUCTS],
             path: PRODUCTS,
             exact: true,
             title: 'Products'
