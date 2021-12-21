@@ -1,27 +1,26 @@
-import React, {useCallback, useState} from "react";
+import React, {useState} from "react";
 import {Button, Card, Checkbox, Form, FormLayout, List, Page, TextField, Stack, Thumbnail, Caption, DropZone, } from "@shopify/polaris";
 import { NoteMinor } from "@shopify/polaris-icons";
 
 
 function Create() {
-    const [newsletter, setNewsletter] = useState(false);
-    const [description, setDescription] = useState('');
     const [title, setTitle] = useState('');
-    const [variants, setVariants] = useState([]);
+    const [authorName, setAuthorName] = useState('');
+    const [description, setDescription] = useState('');
+    const [numberOfPages, setNumberOfPages] = useState(null);
+    const [price, setPrice] = useState(0);
+    const [compareAtPrice, setCompareAtPrice] = useState(0);
+    const [wholeSalePrice, setWholeSalePrice] = useState(0);
 
-    const [files, setFiles] = useState([]);
+    const [images, setImages] = useState([]);
 
-    const handleDropZoneDrop = useCallback(
-        (_dropFiles, acceptedFiles, _rejectedFiles) =>
-            setFiles((files) => [...files, ...acceptedFiles]),
-        [],
-    );
+    const handleDropZoneDrop = (_dropFiles, acceptedFiles, _rejectedFiles) => setImages((images) => [...images, ...acceptedFiles]);
 
     const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
 
-    const uploadedFiles = files.length > 0 && (
+    const uploadedImages = images.length > 0 && (
         <Stack vertical>
-            {files.map((file, index) => (
+            {images.map((file, index) => (
                 <Stack alignment="center" key={index}>
                     <Thumbnail
                         size="small"
@@ -40,50 +39,108 @@ function Create() {
         </Stack>
     );
 
-    const createVariant = () => {
-        setVariants([[]]);
-    }
-
-    const addVariants = (variant, i) => {
-        return (
-            <>
-                <TextField value={title} onChange={handleTitleChange} label="Title" type="text" autoComplete={title}/>
-                <TextField value={description} onChange={handleDescriptionChange} label="Description" type="text" autoComplete={description} />
-                <DropZone onDrop={handleDropZoneDrop}>
-                    {uploadedFiles}
-                    {
-                        !files.length &&
-                        <DropZone.FileUpload actionTitle={'Add file'} actionHint={'or drop file to upload'}/>
-                    }
-                </DropZone>
-            </>
-        );
-    }
     const handleSubmit = () => {
+        let form = {
+            title: title,
+            authorName: authorName,
+            description: description,
+            numberOfPages: numberOfPages,
+            images: images,
+            price: price,
+            compareAtPrice: compareAtPrice,
+            wholesalePrice: wholeSalePrice,
+        }
+        console.log('Submitted', form);
         alert('Submitted');
     }
 
-    const handleTitleChange = useCallback((value) => setTitle(value), []);
-    const handleDescriptionChange = useCallback((value) => setDescription(value), []);
+    const handleTitleChange = ((value) => setTitle(value));
+    const handleAuthorNameChange = ((value) => setAuthorName(value));
+    const handleDescriptionChange = ((value) => setDescription(value));
+    const handleNumberOfPagesChange = ((value) => setNumberOfPages(value));
+    const handlePriceChange = ((value) => setPrice(value));
+    const handleCompareAtPriceChange = ((value) => setCompareAtPrice(value));
+    const handleWholeSalePriceChange = ((value) => setWholeSalePrice(value));
 
     return (
         <>
             <Page fullWidth title="Create Product">
-                <Card primaryFooterAction={{content: 'Create', onAction: createVariant}} sectioned>
+                <Card
+                    primaryFooterAction={
+                        {
+                            content: 'Create',
+                            onAction: () => alert('hello')
+                        }
+                    }
+                    sectioned
+                >
                     <Form onSubmit={handleSubmit}>
                         <FormLayout>
-                            <TextField value={title} onChange={handleTitleChange} label="Title" type="text" autoComplete={title}/>
-                            <TextField value={description} onChange={handleDescriptionChange} label="Description" type="text" autoComplete={description} />
+                            <TextField
+                                value={title}
+                                onChange={handleTitleChange}
+                                label="Title"
+                                type="text"
+                                autoComplete={title}
+                            />
+                            <FormLayout.Group>
+                                <FormLayout>
+                                    <TextField
+                                        value={authorName}
+                                        onChange={handleAuthorNameChange}
+                                        label="Author Name"
+                                        type="text"
+                                        autoComplete={authorName}
+                                    />
+                                    <TextField
+                                        value={numberOfPages}
+                                        onChange={handleNumberOfPagesChange}
+                                        label="No. Of Pages"
+                                        type="number" autoComplete={numberOfPages}
+                                    />
+                                </FormLayout>
+                                <TextField
+                                    value={description}
+                                    onChange={handleDescriptionChange}
+                                    label="Description"
+                                    type="text"
+                                    autoComplete={description}
+                                    multiline={true}
+                                    maxHeight={110}
+                                />
+                            </FormLayout.Group>
                             <DropZone onDrop={handleDropZoneDrop}>
-                                {uploadedFiles}
+                                {uploadedImages}
                                 {
-                                    !files.length &&
-                                    <DropZone.FileUpload actionTitle={'Add file'} actionHint={'or drop file to upload'}/>
+                                    !images.length &&
+                                    <DropZone.FileUpload
+                                        actionTitle={'Add file'}
+                                        actionHint={'or drop file to upload'}
+                                    />
                                 }
                             </DropZone>
-                            { variants.map( (variant, i) => {
-                                return addVariants(variant, i);
-                            }) }
+                            <FormLayout.Group>
+                                <TextField
+                                    value={price}
+                                    onChange={handlePriceChange}
+                                    label="Price" type="number"
+                                    autoComplete={price}
+                                />
+                                <TextField
+                                    value={compareAtPrice}
+                                    onChange={handleCompareAtPriceChange}
+                                    label="Compare At Price"
+                                    type="number"
+                                    autoComplete={compareAtPrice}
+                                />
+                            </FormLayout.Group>
+                            <TextField
+                                value={wholeSalePrice}
+                                onChange={handleWholeSalePriceChange}
+                                label="Wholesale Price"
+                                type="number"
+                                autoComplete={wholeSalePrice}
+                            />
                             <Button submit>Submit</Button>
                         </FormLayout>
                     </Form>
