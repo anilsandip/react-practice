@@ -5,7 +5,6 @@ import { NoteMinor } from "@shopify/polaris-icons";
 
 function Create() {
     const [newsletter, setNewsletter] = useState(false);
-    const [email, setEmail] = useState('');
     const [description, setDescription] = useState('');
     const [title, setTitle] = useState('');
     const [variants, setVariants] = useState([]);
@@ -20,7 +19,6 @@ function Create() {
 
     const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
 
-    const fileUpload = !files.length && <DropZone.FileUpload />;
     const uploadedFiles = files.length > 0 && (
         <Stack vertical>
             {files.map((file, index) => (
@@ -42,12 +40,27 @@ function Create() {
         </Stack>
     );
 
+    const createVariant = () => {
+        setVariants([[]]);
+    }
 
     const addVariants = (variant, i) => {
-
+        return (
+            <>
+                <TextField value={title} onChange={handleTitleChange} label="Title" type="text" autoComplete={title}/>
+                <TextField value={description} onChange={handleDescriptionChange} label="Description" type="text" autoComplete={description} />
+                <DropZone onDrop={handleDropZoneDrop}>
+                    {uploadedFiles}
+                    {
+                        !files.length &&
+                        <DropZone.FileUpload actionTitle={'Add file'} actionHint={'or drop file to upload'}/>
+                    }
+                </DropZone>
+            </>
+        );
     }
     const handleSubmit = () => {
-
+        alert('Submitted');
     }
 
     const handleTitleChange = useCallback((value) => setTitle(value), []);
@@ -56,14 +69,17 @@ function Create() {
     return (
         <>
             <Page fullWidth title="Create Product">
-                <Card primaryFooterAction={{content: 'Create'}} sectioned>
+                <Card primaryFooterAction={{content: 'Create', onAction: createVariant}} sectioned>
                     <Form onSubmit={handleSubmit}>
                         <FormLayout>
                             <TextField value={title} onChange={handleTitleChange} label="Title" type="text" autoComplete={title}/>
                             <TextField value={description} onChange={handleDescriptionChange} label="Description" type="text" autoComplete={description} />
                             <DropZone onDrop={handleDropZoneDrop}>
                                 {uploadedFiles}
-                                {fileUpload}
+                                {
+                                    !files.length &&
+                                    <DropZone.FileUpload actionTitle={'Add file'} actionHint={'or drop file to upload'}/>
+                                }
                             </DropZone>
                             { variants.map( (variant, i) => {
                                 return addVariants(variant, i);
