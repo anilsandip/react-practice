@@ -320,6 +320,17 @@ return [
     */
 
     'webhooks' => [
+        [
+            'topic' => 'PRODUCTS_CREATE',
+            'address' => env('APP_WEBHOOK_URL').'/webhook/products-create',
+        ],
+        [
+            'topic' => 'PRODUCTS_UPDATE',
+            'address' => env('APP_WEBHOOK_URL').'/webhook/products-update'
+        ]
+
+
+
         /*
             [
                 'topic' => env('SHOPIFY_WEBHOOK_1_TOPIC', 'ORDERS_CREATE'),

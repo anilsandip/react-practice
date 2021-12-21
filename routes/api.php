@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +17,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+Route::group(['middleware' => ['verify.shop']], function () {
+    Route::group(['prefix' => 'products'], function () {
+        Route::get('/', [ProductsController::class, 'index']);
+    });
 });
