@@ -7,11 +7,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
 use stdClass;
 
-class ProductsCreateJob implements ShouldQueue
+class ProductsDeleteJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -53,14 +52,6 @@ class ProductsCreateJob implements ShouldQueue
         $shop = User::where('name', $this->shopDomain)->firstOrFail();
         $product = json_decode(json_encode($this->data), true);
         $product = collect($product)->toArray();
-        Product::create([
-            'shop_id' => $shop->id,
-            'product_id' => $product['id'],
-            'title' => $product['title'],
-            'description' => $product['body_html'] ?? '',
-            'price' => $product['variants'][0]['price'],
-            'compare_at_price' => $product['variants'][0]['compare_at_price'],
-            'images' => collect($product['images'])->pluck('src')->toArray(),
-        ]);
+        Product::where('shop_id', $shop->id)->where('product_id', $product['id'])->delete();
     }
 }

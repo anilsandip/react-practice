@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import { API } from  '../../api';
 import {Card, DataTable, Page, ButtonGroup, Button, Pagination, Spinner} from "@shopify/polaris";
 import { DeleteMinor, EditMinor } from "@shopify/polaris-icons";
 import { useNavigate, Link } from "react-router-dom"
@@ -23,7 +22,7 @@ function Index() {
     const getProducts = async (options = {}) => {
         let productsArr = [];
         try {
-            let { data } = await API.get(`api/products`, {params: options});
+            let { data } = await axios.get(`api/products`, {params: options});
             data.data.forEach((product) => {
                 productsArr.push({
                     id: product.id,
@@ -57,26 +56,39 @@ function Index() {
         navigate('/products/create');
     }
 
-    const handleEdit = (index) => {
-        alert(`Edit ${index}`);
+    const handleEdit = (id, index) => {
+        navigate(`/products/${id}/edit`);
+        console.log(`Edit ${index}`);
     }
 
-    const handleDelete = (index) => {
-        setModal(true);
+    const handleDelete = (id, index) => {
         setProductIndex(index);
+        setModal(true);
         console.log(`Delete ${index}`);
     }
 
-    const handleConfirm = (confirmation) => {
+    const handleConfirm = async (confirmation) => {
         setConfirm(confirmation);
-        setModal(false);
         if(confirmation) {
             console.log(`Confirmed ${productIndex}`);
+            try {
+                setLoading(true);
+                let parameters = {
+                    id: products[productIndex].id,
+                }
+                let { data } = await axios.delete(`api/products`, {params: parameters});
+                console.log(data.message);
+                getProducts(options)
+            } catch (error) {
+                console.log(error)
+            }
+            setLoading(false);
         }
         else {
-            setProductIndex(null);
             console.log(`Declined ${productIndex}`);
         }
+        setModal(false);
+        setProductIndex(null);
     }
 
     const primaryAction = {
@@ -101,18 +113,18 @@ function Index() {
 
     const rows = () => {
         let productsArr = [];
-        products.forEach((product) => {
+        products.forEach((product, index) => {
             productsArr.push(
                 [
-                    <Link to="/products/1">
+                    <Link to={`/products/${product.id}`}>
                         { product.title }
                     </Link>,
                     product.author,
                     product.price,
                     <div className={"StyleDataTableActions"}>
                         <ButtonGroup>
-                            <Button plain monochrome icon={EditMinor} onClick={() => handleEdit(product.id)}/>
-                            <Button plain destructive icon={DeleteMinor} onClick={() => handleDelete(product.id)}/>
+                            <Button plain monochrome icon={EditMinor} onClick={() => handleEdit(product.id, index)}/>
+                            <Button plain destructive icon={DeleteMinor} onClick={() => handleDelete(product.id, index)}/>
                         </ButtonGroup>
                     </div>,
                 ],
@@ -166,9 +178,9 @@ function Index() {
                     />
                 </Card>
                 {
-                    modal &&
+                    modal && (productIndex || productIndex === 0) &&
                     <ConfirmDialogue
-                        message={`Are you sure want to delete this product ?`}
+                        message={`Are you sure want to delete ${products[productIndex].title} product ?`}
                         options={{
                             primaryAction: {
                                 destructive: true,

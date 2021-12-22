@@ -11,6 +11,7 @@ const PRODUCTS_LAYOUT = {
     LIST_PRODUCTS: '',
     CREATE_PRODUCT: 'create',
     SHOW_PRODUCT: ':id',
+    EDIT_PRODUCT: ':id/edit',
 };
 const TEST = '/test';
 
@@ -52,6 +53,14 @@ const routes = [
                 exact: true,
                 page: {
                     component: Show,
+                    title: 'Product'
+                }
+            },
+            {
+                path: PRODUCTS_LAYOUT.EDIT_PRODUCT,
+                exact: true,
+                page: {
+                    component: Create,
                     title: 'Product'
                 }
             },

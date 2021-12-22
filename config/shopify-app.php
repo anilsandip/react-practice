@@ -327,7 +327,11 @@ return [
         [
             'topic' => 'PRODUCTS_UPDATE',
             'address' => env('APP_WEBHOOK_URL').'/webhook/products-update'
-        ]
+        ],
+        [
+            'topic' => 'PRODUCTS_DELETE',
+            'address' => env('APP_WEBHOOK_URL').'/webhook/products-delete'
+        ],
 
 
 
