@@ -40,7 +40,7 @@ class SyncProducts extends Command
     public function handle()
     {
         $shop = User::find(3);
-        $params = ['limit' => 50];
+        $params = ['limit' => 250];
         do {
             $response = null;
             try {

@@ -1,41 +1,22 @@
-import axios from "axios";
+window.axios = require('axios');
 
-axios.defaults.baseURL = process.env.MIX_APP_URL;
+window.axios.defaults.baseURL = process.env.MIX_APP_URL;
 
 export default class AxiosClass {
-    async get(url) {
-        if (window.sessionToken === undefined) {
-            await axios.get('/authenticate/token');
-        }
-        const headers = {
-            'Authorization': `Bearer ${window.sessionToken}`,
-        };
-        return this.responseHandler(axios.get(url,{headers: headers}));
+    async get(url, body) {
+        return this.responseHandler(axios.get(url, body));
     }
-
     post(url, body) {
-        const headers = {
-            'Authorization': `Bearer ${window.sessionToken}`,
-        };
         return this.responseHandler(
-            axios.post(url, body , {headers: headers})
+            axios.post(url, body)
         );
     }
-
     put(url, body ) {
-        const headers = {
-            'Authorization': `Bearer ${window.sessionToken}`,
-        };
-        return this.responseHandler(axios.put(url, body, {headers: headers}));
+        return this.responseHandler(axios.put(url, body));
     }
-
     delete(url) {
-        const headers = {
-            'Authorization': `Bearer ${window.sessionToken}`,
-        };
-        return this.responseHandler(axios.delete(url,{headers: headers}));
+        return this.responseHandler(axios.delete(url));
     }
-
     async responseHandler(responsePromise) {
         try {
             return await responsePromise;

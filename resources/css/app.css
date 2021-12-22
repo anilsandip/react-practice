@@ -248,6 +248,13 @@
     float: right;
 }
 
+.Loader_Spinner {
+    position: fixed;
+    z-index: 999;
+    display: flex;
+    left: 40%;
+    top: 50%;
+}
 /***********Home-page-End***********/
 
 /***********Media-query***********/

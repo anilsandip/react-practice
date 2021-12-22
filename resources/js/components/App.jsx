@@ -1,9 +1,10 @@
 import React from "react";
 import { AppProvider,  Frame } from "@shopify/polaris";
 import {Provider} from "@shopify/app-bridge-react";
-import {BrowserRouter as Router, Link} from "react-router-dom";
+import {BrowserRouter as Router} from "react-router-dom";
 import Menu from "../routes/Menu";
 import Content from "./Content";
+import { getSessionToken } from '@shopify/app-bridge-utils';
 
 function App() {
     const config = {
@@ -13,6 +14,14 @@ function App() {
         planId : document.getElementById("planId").value,
         forceRedirect : true,
     };
+
+    window.axios.interceptors.request.use((config) => {
+        return getSessionToken(window.shopify_app_bridge)
+            .then((token) => {
+                config.headers["Authorization"] = `Bearer ${token}`;
+                return config;
+            });
+    });
 
     return (
         <AppProvider

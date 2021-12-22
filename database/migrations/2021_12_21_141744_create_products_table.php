@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->longText('description')->nullable();
             $table->float('price')->default(0);
             $table->float('compare_at_price')->nullable();
+            $table->string('author')->nullable();
             $table->float('wholesale_price')->default(0);
             $table->integer('no_of_pages')->default(0);
             $table->json('images')->nullable();
