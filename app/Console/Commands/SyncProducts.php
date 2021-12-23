@@ -40,6 +40,10 @@ class SyncProducts extends Command
     public function handle()
     {
         $shop = User::find(3);
+        if(!$shop) {
+            echo "Shop not found";
+            return 0;
+        }
         $params = ['limit' => 250];
         do {
             $response = null;
