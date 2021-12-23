@@ -60,7 +60,10 @@ class SyncProducts extends Command
             if($response && !$response['errors']) {
                 $products = $response['body']['products'] ?? [];
                 foreach ($products as $product) {
-                    Product::create([
+                    Product::updateOrCreate([
+                        'shop_id' => $shop->id,
+                        'product_id' => $product['id'],
+                    ],[
                         'shop_id' => $shop->id,
                         'product_id' => $product['id'],
                         'title' => $product['title'],

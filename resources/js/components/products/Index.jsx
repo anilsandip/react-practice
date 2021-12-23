@@ -22,6 +22,7 @@ function Index() {
     const getProducts = async (options = {}) => {
         let productsArr = [];
         try {
+            setLoading(true);
             let { data } = await axios.get(`api/products`, {params: options});
             data.data.forEach((product) => {
                 productsArr.push({
@@ -29,7 +30,7 @@ function Index() {
                     title: product.title,
                     price: product.price,
                     compareAtPrice: product.compare_at_price,
-                    author: product.author,
+                    author: product.author || 'N/A' ,
                 })
             });
             setProducts(productsArr);

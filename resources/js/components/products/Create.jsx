@@ -45,13 +45,28 @@ function Create() {
             authorName: authorName,
             description: description,
             numberOfPages: numberOfPages,
-            images: images,
             price: price,
             compareAtPrice: compareAtPrice,
             wholesalePrice: wholeSalePrice,
         }
-        console.log('Submitted', form);
-        alert('Submitted');
+       try {
+           const formData = new FormData();
+           for (const [key,value] of Object.entries(form)) {
+               formData.append(key, value);
+           }
+           images.forEach((image) => {
+              formData.append('images[]', image)
+           });
+           const config = {
+               headers: {
+                   'enctype': 'multipart/form-data'
+               }
+           }
+            let { data } = axios.post('api/products', formData, config);
+           console.log(data);
+       } catch (error) {
+            console.log(error)
+       }
     }
 
     const handleTitleChange = ((value) => setTitle(value));
@@ -64,16 +79,8 @@ function Create() {
 
     return (
         <>
-            <Page fullWidth title="Create Product">
-                <Card
-                    primaryFooterAction={
-                        {
-                            content: 'Create',
-                            onAction: () => alert('hello')
-                        }
-                    }
-                    sectioned
-                >
+            <Page title="Create Product">
+                <Card sectioned>
                     <Form onSubmit={handleSubmit}>
                         <FormLayout>
                             <TextField
@@ -83,32 +90,15 @@ function Create() {
                                 type="text"
                                 autoComplete={title}
                             />
-                            <FormLayout.Group>
-                                <FormLayout>
-                                    <TextField
-                                        value={authorName}
-                                        onChange={handleAuthorNameChange}
-                                        label="Author Name"
-                                        type="text"
-                                        autoComplete={authorName}
-                                    />
-                                    <TextField
-                                        value={numberOfPages}
-                                        onChange={handleNumberOfPagesChange}
-                                        label="No. Of Pages"
-                                        type="number" autoComplete={numberOfPages}
-                                    />
-                                </FormLayout>
-                                <TextField
-                                    value={description}
-                                    onChange={handleDescriptionChange}
-                                    label="Description"
-                                    type="text"
-                                    autoComplete={description}
-                                    multiline={true}
-                                    maxHeight={110}
-                                />
-                            </FormLayout.Group>
+                            <TextField
+                                value={description}
+                                onChange={handleDescriptionChange}
+                                label="Description"
+                                type="text"
+                                autoComplete={description}
+                                multiline={true}
+                                maxHeight={110}
+                            />
                             <DropZone onDrop={handleDropZoneDrop}>
                                 {uploadedImages}
                                 {
@@ -134,6 +124,21 @@ function Create() {
                                     autoComplete={compareAtPrice}
                                 />
                             </FormLayout.Group>
+                            <FormLayout.Group>
+                                <TextField
+                                    value={authorName}
+                                    onChange={handleAuthorNameChange}
+                                    label="Author Name"
+                                    type="text"
+                                    autoComplete={authorName}
+                                />
+                                <TextField
+                                    value={numberOfPages}
+                                    onChange={handleNumberOfPagesChange}
+                                    label="No. Of Pages"
+                                    type="number" autoComplete={numberOfPages}
+                                />
+                            </FormLayout.Group>
                             <TextField
                                 value={wholeSalePrice}
                                 onChange={handleWholeSalePriceChange}
@@ -141,7 +146,7 @@ function Create() {
                                 type="number"
                                 autoComplete={wholeSalePrice}
                             />
-                            <Button submit>Submit</Button>
+                            <Button submit primary>Submit</Button>
                         </FormLayout>
                     </Form>
                 </Card>

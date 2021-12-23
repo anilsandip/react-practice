@@ -21,6 +21,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => ['verify.shop']], function () {
     Route::group(['prefix' => 'products'], function () {
         Route::get('/', [ProductsController::class, 'index']);
+        Route::post('/', [ProductsController::class, 'store']);
+        Route::put('/', [ProductsController::class, 'update']);
         Route::delete('/', [ProductsController::class, 'delete']);
     });
 });
