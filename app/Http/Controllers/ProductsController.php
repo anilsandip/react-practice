@@ -40,7 +40,19 @@ class ProductsController extends Controller
 
         $addProduct = [];
         $addProduct['product'] = $params;
-        return $shop->api()->rest('POST', '/admin/products.json', $addProduct);
+
+        try {
+            $response = $shop->api()->rest('POST', '/admin/products.json', $addProduct);
+        }
+        catch(\Exception $e) {
+            sleep(1);
+            try {
+                $response = $shop->api()->rest('POST', '/admin/products.json', $addProduct);
+            } catch (\Exception $e) {
+                report($e->getMessage());
+            }
+        }
+        return $response ?? [];
 
     }
 
@@ -55,13 +67,19 @@ class ProductsController extends Controller
         $url = '/admin/products/'. $product->product_id .'.json';
         try {
             $response = $shop->api()->rest('DELETE', $url);
-            if($response['errors']) {
-                return response(['message' => $response['body']], 500);
-            }
-            return response(['message' => 'Product deleted successfully'], 200);
         }
         catch (\Exception $e) {
-            return response(['message' => $e->getMessage()], 500);
+            sleep(1);
+            try {
+                $response = $shop->api()->rest('DELETE', $url);
+            } catch (\Exception $e) {
+                report($e->getMessage());
+            }
         }
+
+        if($response['errors'] ?? false) {
+            return response(['message' => $response['body']], 500);
+        }
+        return response(['message' => 'Product deleted successfully'], 200);
     }
 }

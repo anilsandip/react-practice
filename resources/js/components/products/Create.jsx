@@ -1,6 +1,8 @@
 import React, {useState} from "react";
-import {Button, Card, Checkbox, Form, FormLayout, List, Page, TextField, Stack, Thumbnail, Caption, DropZone, } from "@shopify/polaris";
-import { NoteMinor } from "@shopify/polaris-icons";
+import {Button, Card, Checkbox, Form, FormLayout, List, Page, TextField, Stack, Thumbnail, Caption, DropZone} from "@shopify/polaris";
+import { NoteMinor, CircleCancelMajor } from "@shopify/polaris-icons";
+import {useNavigate} from "react-router-dom";
+import {LoaderComponent} from "../common/Loader";
 
 
 function Create() {
@@ -13,15 +15,23 @@ function Create() {
     const [wholeSalePrice, setWholeSalePrice] = useState(0);
 
     const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleDropZoneDrop = (_dropFiles, acceptedFiles, _rejectedFiles) => setImages((images) => [...images, ...acceptedFiles]);
 
-    const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+    const handleImageCancel = (file) => {
+        const tempImages = [...images];
+        setImages(_.reject(tempImages, { name: file.name, type: file.type, size: file.size, lastModified: file.lastModified }));
+    }
 
-    const uploadedImages = images.length > 0 && (
+    const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/jpg', 'image/svg'];
+
+    const uploadedImages = images.length > 0 ? (
         <Stack vertical>
             {images.map((file, index) => (
-                <Stack alignment="center" key={index}>
+                <Stack alignment="center" key={index} className={'Margin-top--4px'}>
                     <Thumbnail
                         size="small"
                         alt={file.name}
@@ -32,14 +42,21 @@ function Create() {
                         }
                     />
                     <div>
-                        {file.name} <Caption>{file.size} bytes</Caption>
+                        {file.name}
+                        <Caption>{file.size} bytes</Caption>
                     </div>
+                    <Button
+                        icon={CircleCancelMajor}
+                        monochrome plain
+                        onClick={() => handleImageCancel(file)}
+                    />
                 </Stack>
             ))}
         </Stack>
-    );
+    ) : null;
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        setLoading(true);
         let form = {
             title: title,
             authorName: authorName,
@@ -62,8 +79,9 @@ function Create() {
                    'enctype': 'multipart/form-data'
                }
            }
-            let { data } = axios.post('api/products', formData, config);
-           console.log(data);
+            let { data } = await axios.post('/api/products', formData, config);
+            setLoading(false);
+            navigate('/products');
        } catch (error) {
             console.log(error)
        }
@@ -80,6 +98,10 @@ function Create() {
     return (
         <>
             <Page title="Create Product">
+                {
+                    loading &&
+                    <LoaderComponent />
+                }
                 <Card sectioned>
                     <Form onSubmit={handleSubmit}>
                         <FormLayout>
@@ -99,16 +121,27 @@ function Create() {
                                 multiline={true}
                                 maxHeight={110}
                             />
-                            <DropZone onDrop={handleDropZoneDrop}>
-                                {uploadedImages}
-                                {
-                                    !images.length &&
-                                    <DropZone.FileUpload
-                                        actionTitle={'Add file'}
-                                        actionHint={'or drop file to upload'}
-                                    />
-                                }
-                            </DropZone>
+
+                            Images
+                            <div style={{background: '#f8f8f8', padding: '2rem'}}>
+                                <Stack>
+                                    <Stack.Item fill>
+                                        {uploadedImages}
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <div style={{width: 120, height: 120}}>
+                                            <DropZone onDrop={handleDropZoneDrop} type="image" accept={validImageTypes}>
+                                                {
+                                                    <DropZone.FileUpload
+                                                        actionTitle={'Add file'}
+                                                        actionHint={'or drop file to upload'}
+                                                    />
+                                                }
+                                            </DropZone>
+                                        </div>
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
                             <FormLayout.Group>
                                 <TextField
                                     value={price}
@@ -146,7 +179,7 @@ function Create() {
                                 type="number"
                                 autoComplete={wholeSalePrice}
                             />
-                            <Button submit primary>Submit</Button>
+                            <Button submit primary loading={loading}>Submit</Button>
                         </FormLayout>
                     </Form>
                 </Card>

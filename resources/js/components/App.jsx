@@ -1,5 +1,6 @@
 import React from "react";
 window.axios = require('axios');
+window._ = require('lodash');
 import { AppProvider,  Frame } from "@shopify/polaris";
 import {Provider} from "@shopify/app-bridge-react";
 import {BrowserRouter as Router} from "react-router-dom";
