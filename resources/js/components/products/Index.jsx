@@ -74,10 +74,7 @@ function Index() {
             console.log(`Confirmed ${productIndex}`);
             try {
                 setLoading(true);
-                let parameters = {
-                    id: products[productIndex].id,
-                }
-                let { data } = await axios.delete(`api/products`, {params: parameters});
+                let { data } = await axios.delete(`api/products/${products[productIndex].id}`);
                 console.log(data.message);
                 getProducts(options)
             } catch (error) {

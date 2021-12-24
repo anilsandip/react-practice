@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Card, Checkbox, Form, FormLayout, List, Page, TextField, Stack, Thumbnail, Caption, DropZone} from "@shopify/polaris";
 import { NoteMinor, CircleCancelMajor } from "@shopify/polaris-icons";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useLocation, useParams} from "react-router-dom";
 import {LoaderComponent} from "../common/Loader";
 
 
@@ -13,11 +13,41 @@ function Create() {
     const [price, setPrice] = useState(0);
     const [compareAtPrice, setCompareAtPrice] = useState(0);
     const [wholeSalePrice, setWholeSalePrice] = useState(0);
+    const [product, setProduct] = useState({});
 
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const { id } = useParams();
+
+    useEffect(async () => {
+        console.log(id);
+        if(/\/products\/[0-9]+\/edit/.test(location.pathname)) {
+            console.log(location)
+            await getProduct();
+            console.log(price);
+        }
+    }, []);
+
+    const getProduct = async () => {
+        try {
+            let {data} = await axios.get(`/api/products/${id}`);
+            await setProduct(data);
+            await setTitle(data.title);
+            await setAuthorName(data.author);
+            await setDescription(data.description);
+            await setPrice(data.price);
+            await setCompareAtPrice(data.compare_at_price);
+            await setWholeSalePrice(data.wholesale_price);
+            await setNumberOfPages(data.no_of_pages);
+            console.log(data);
+        }
+        catch(error) {
+            console.log(error)
+        }
+    }
 
     const handleDropZoneDrop = (_dropFiles, acceptedFiles, _rejectedFiles) => setImages((images) => [...images, ...acceptedFiles]);
 
