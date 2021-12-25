@@ -2,6 +2,7 @@
 
 use App\Models\Product;
 use App\Models\User;
+use App\Traits\ProductHelpers;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -13,7 +14,7 @@ use stdClass;
 
 class ProductsCreateJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ProductHelpers;
 
     /**
      * Shop's myshopify domain
@@ -53,14 +54,7 @@ class ProductsCreateJob implements ShouldQueue
         $shop = User::where('name', $this->shopDomain)->firstOrFail();
         $product = json_decode(json_encode($this->data), true);
         $product = collect($product)->toArray();
-        Product::create([
-            'shop_id' => $shop->id,
-            'product_id' => $product['id'],
-            'title' => $product['title'],
-            'description' => $product['body_html'] ?? '',
-            'price' => $product['variants'][0]['price'],
-            'compare_at_price' => $product['variants'][0]['compare_at_price'],
-            'images' => collect($product['images'])->pluck('src')->toArray(),
-        ]);
+
+        $this->createProduct($shop, $product, 'webhook');
     }
 }

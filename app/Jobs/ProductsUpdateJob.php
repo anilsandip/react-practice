@@ -54,12 +54,13 @@ class ProductsUpdateJob implements ShouldQueue
         $productData = json_decode(json_encode($this->data), true);
         $productData = collect($productData)->toArray();
         $product = Product::where('shop_id', $shop->id)->where('product_id', $productData['id'])->firstOrFail();
-        $product->update([
-            'title' => $productData['title'],
-            'description' => $productData['body_html'] ?? '',
-            'price' => $productData['variants'][0]['price'],
-            'compare_at_price' => $productData['variants'][0]['compare_at_price'],
-            'images' => collect($productData['images'])->pluck('src')->toArray(),
-        ]);
+        $product->update(
+            [
+                'title'            => $productData['title'],
+                'description'      => $productData['body_html'] ?? '',
+                'price'            => $productData['variants'][0]['price'],
+                'compare_at_price' => $productData['variants'][0]['compare_at_price'],
+                'images'           => collect($productData['images'])->pluck('src')->toArray(),
+            ]);
     }
 }

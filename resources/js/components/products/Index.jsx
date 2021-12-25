@@ -59,13 +59,11 @@ function Index() {
 
     const handleEdit = (id, index) => {
         navigate(`/products/${id}/edit`);
-        console.log(`Edit ${index}`);
     }
 
     const handleDelete = (id, index) => {
         setProductIndex(index);
         setModal(true);
-        console.log(`Delete ${index}`);
     }
 
     const handleConfirm = async (confirmation) => {

@@ -2,12 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Product;
 use App\Models\User;
+use App\Traits\ProductHelpers;
 use Illuminate\Console\Command;
 
 class SyncProducts extends Command
 {
+    use ProductHelpers;
     /**
      * The name and signature of the console command.
      *
@@ -64,18 +65,7 @@ class SyncProducts extends Command
             if($response && !$response['errors']) {
                 $products = $response['body']['products'] ?? [];
                 foreach ($products as $product) {
-                    Product::updateOrCreate([
-                        'shop_id' => $shop->id,
-                        'product_id' => $product['id'],
-                    ],[
-                        'shop_id' => $shop->id,
-                        'product_id' => $product['id'],
-                        'title' => $product['title'],
-                        'description' => $product['body_html'] ?? '',
-                        'price' => $product['variants'][0]['price'],
-                        'compare_at_price' => $product['variants'][0]['compare_at_price'],
-                        'images' => collect($product['images'])->pluck('src')->toArray(),
-                    ]);
+                    $this->createProduct($shop, $product);
                 }
             }
         }
