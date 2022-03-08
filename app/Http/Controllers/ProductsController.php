@@ -9,7 +9,16 @@ use Illuminate\Support\Facades\Log;
 class ProductsController extends Controller
 {
     public function index(Request $request) {
-        return Product::paginate(10);
+        $search = $request->get('search');
+        $products = new Product();
+        if($search) {
+            $products = $products->where(function ($query) use($search) {
+                $query->where('title', 'LIKE', "%$search%")
+                      /*->orWhere('description', 'LIKE', "%$search%")*/
+                      ->orWhere('price', 'LIKE', "%$search%");
+            });
+        }
+        return $products->paginate(10);
     }
 
     public function delete(Request $request) {

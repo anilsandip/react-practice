@@ -1,12 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {Card, DataTable, Page, ButtonGroup, Button, Pagination, Spinner} from "@shopify/polaris";
+import React, {useCallback, useEffect, useState} from "react";
+import {Card, DataTable, Page, ButtonGroup, Button, Pagination, Spinner, Filters} from "@shopify/polaris";
 import { DeleteMinor, EditMinor } from "@shopify/polaris-icons";
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate, Link, useParams, useSearchParams, useLocation } from "react-router-dom"
 import ConfirmDialogue from "../common/ConfirmDialogue"
 import {LoaderComponent} from "../common/Loader";
 
 function Index() {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [products, setProducts] = useState([]);
     const [options, setOptions] = useState([]);
     const [pagination, setPagination] = useState({});
@@ -15,8 +16,15 @@ function Index() {
     const [productIndex, setProductIndex] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect( () => {
-        getProducts();
+    const [queryValue, setQueryValue] = useState('');
+
+    useEffect( async () => {
+        const currentParams = Object.fromEntries([...searchParams]);
+        let params = options;
+        params.page = currentParams.page || 1;
+        params.search = currentParams.search || '';
+        setOptions(params);
+        await getProducts(params);
     }, []);
 
     const getProducts = async (options = {}) => {
@@ -44,7 +52,8 @@ function Index() {
             setPagination(paginationParams);
 
             setOptions({
-                page: data.current_page
+                page: data.current_page,
+                search: queryValue
             })
             setLoading(false);
         } catch (error) {
@@ -78,7 +87,7 @@ function Index() {
                 }
                 let { data } = await axios.delete(`api/products`, {params: parameters});
                 console.log(data.message);
-                getProducts(options)
+                await getProducts(options)
             } catch (error) {
                 console.log(error)
             }
@@ -133,18 +142,39 @@ function Index() {
         return productsArr;
     }
 
-    const handlePrev = () => {
+    const handleFiltersQueryChange = async (value) => {
+        setQueryValue(value);
+        let params = options;
+        params.page = 1;
+        params.search = value;
+        setOptions(params);
+        setSearchParams({...searchParams, page: params.page, search: params.search});
+        await getProducts(params);
+    };
+
+    const handleQueryValueRemove = useCallback(() => setQueryValue(null), []);
+    const handleFiltersClearAll = useCallback(() => {
+        handleQueryValueRemove();
+    }, [
+        handleQueryValueRemove,
+    ]);
+
+    const handlePrev = async () => {
         let params = options;
         params.page--;
+        params.search = queryValue;
         setOptions(params);
-        getProducts(options);
+        setSearchParams({...searchParams, page: params.page, search: params.search});
+        await getProducts(params);
     }
 
-    const handleNext = () => {
+    const handleNext = async () => {
         let params = options;
         params.page++;
+        params.search = queryValue;
         setOptions(params);
-        getProducts(options);
+        setSearchParams({...searchParams, page: params.page, search: params.search});
+        await getProducts(params);
     }
 
     const footerContent = (
@@ -170,6 +200,14 @@ function Index() {
                     <LoaderComponent />
                 }
                 <Card>
+                    <Filters
+                        queryValue={queryValue}
+                        filters={[]}
+                        onQueryChange={handleFiltersQueryChange}
+                        onQueryClear={handleQueryValueRemove}
+                        onClearAll={handleFiltersClearAll}
+                        queryPlaceholder="Filter items"
+                    />
                     <DataTable
                         columnContentTypes={columnContentTypes}
                         headings={headings}

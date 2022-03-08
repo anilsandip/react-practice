@@ -8,8 +8,32 @@ function Content(){
     let history = History.create(window.shopify_app_bridge);
 
     useEffect(() => {
-        history.dispatch(History.Action.PUSH, location.pathname === INDEX || location.pathname === '' ? '/products' : location.pathname)
-    }, [location.pathname]);
+        let path = location.pathname === INDEX || location.pathname === '' ? '/products' : location.pathname;
+        let query = processQuery(location.search);
+        if(query.length) {
+            path = path + query;
+        }
+        history.dispatch(History.Action.PUSH, path);
+    }, [location]);
+
+    const processQuery = (query) => {
+        let queries = query.split('?');
+        let preparedQueries = [];
+        if(queries.length === 2) {
+            queries = queries[1].split('&');
+            queries.forEach((param) => {
+                let tempParam = param.split('=');
+                if(tempParam.length === 2 && !(tempParam[0] === 'host' || tempParam[0] === 'token')) {
+                    preparedQueries.push(param);
+                }
+            })
+        }
+        if(preparedQueries.length) {
+            preparedQueries = preparedQueries.join('&');
+            preparedQueries = `?${preparedQueries}`;
+        }
+        return preparedQueries;
+    }
 
     const prepareRoutes = (route, index) => {
         let preparedRoute = <Route exact path={route.path} key={index} element={<route.page.component />} />;
