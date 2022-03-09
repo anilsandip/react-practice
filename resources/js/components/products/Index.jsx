@@ -9,7 +9,7 @@ function Index() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [products, setProducts] = useState([]);
-    const [options, setOptions] = useState([]);
+    const [options, setOptions] = useState({});
     const [pagination, setPagination] = useState({});
     const [modal, setModal] = useState(false);
     const [confirm, setConfirm] = useState(false);
@@ -24,6 +24,7 @@ function Index() {
         params.page = currentParams.page || 1;
         params.search = currentParams.search || '';
         setOptions(params);
+        setQueryValue(params.search);
         await getProducts(params);
     }, []);
 
@@ -148,7 +149,11 @@ function Index() {
         params.page = 1;
         params.search = value;
         setOptions(params);
-        setSearchParams({...searchParams, page: params.page, search: params.search});
+        let searchParam = { page: 1 };
+        if(value) {
+            searchParam.search = value;
+        }
+        setSearchParams({...searchParams, ...searchParam});
         await getProducts(params);
     };
 
@@ -164,7 +169,11 @@ function Index() {
         params.page--;
         params.search = queryValue;
         setOptions(params);
-        setSearchParams({...searchParams, page: params.page, search: params.search});
+        let searchParam = { page: params.page };
+        if(queryValue) {
+            searchParam.search = queryValue;
+        }
+        setSearchParams({...searchParams, ...searchParam});
         await getProducts(params);
     }
 
@@ -173,7 +182,11 @@ function Index() {
         params.page++;
         params.search = queryValue;
         setOptions(params);
-        setSearchParams({...searchParams, page: params.page, search: params.search});
+        let searchParam = { page: params.page };
+        if(queryValue) {
+            searchParam.search = queryValue;
+        }
+        setSearchParams({...searchParams, ...searchParam});
         await getProducts(params);
     }
 
